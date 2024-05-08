@@ -1,15 +1,15 @@
 import React from "react";
 import { Navigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
+import AuthService from "../services/auth.service";
 
 const Profile = () => {
-  const { user: currentUser } = useSelector((state) => state.auth);
+  const currentUser = AuthService.getCurrentUser();
 
-/*
   if (!currentUser) {
     return <Navigate to="/login" />;
   }
-*/
+
   return (
     <div className="container">
       <header className="jumbotron">
@@ -18,8 +18,8 @@ const Profile = () => {
         </h3>
       </header>
       <p>
-        <strong>Token:</strong> {currentUser.accessToken.substring(0, 20)} ...{" "}
-        {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
+        <strong>Token:</strong> {currentUser.token.substring(0, 20)} ...{" "}
+        {currentUser.token.substr(currentUser.token.length - 20)}
       </p>
       <p>
         <strong>Id:</strong> {currentUser.id}

@@ -18,9 +18,7 @@ const login = (username, password) => {
     })
     .then((response) => {
 
-        console.log(response);
-
-        if(response.data.accessToken) {
+        if(response.data.token) {
             localStorage.setItem("user", JSON.stringify(response.data));
         }
 
@@ -32,8 +30,13 @@ const logout = () => {
     localStorage.removeItem("user");
 };
 
+const getCurrentUser = () => {
+  return JSON.parse(localStorage.getItem("user"));
+};
+
 export default {
     register,
     login,
-    logout
+    logout,
+    getCurrentUser,
 };

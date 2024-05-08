@@ -15,12 +15,13 @@ import BoardAdmin from "./components/BoardAdmin";
 
 import { logout } from "./actions/auth";
 import { clearMessage } from "./actions/message";
+import AuthService from "./services/auth.service";
 
 const App = () => {
   const [showModeratorBoard, setShowModeratorBoard] = useState(false);
   const [showAdminBoard, setShowAdminBoard] = useState(false);
+  const [currentUser, setCurrentUser] = useState(undefined);
 
-  const { user: currentUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   let location = useLocation();
@@ -31,27 +32,31 @@ const App = () => {
     }
   }, [dispatch, location]);
 
-  useEffect(() => {})
   const logOut = useCallback(() => {
     dispatch(logout());
   }, [dispatch]);
 
   useEffect(() => {
-    if (currentUser) {
-      setShowModeratorBoard(currentUser.roles.includes("ROLE_MODERATOR"));
-      setShowAdminBoard(currentUser.roles.includes("ROLE_ADMIN"));
+    const user = AuthService.getCurrentUser();
+
+    if (user) {
+      setCurrentUser(user);
+      setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
+      setShowAdminBoard(user.roles.includes("ROLE_ADMIN"));
     } else {
       setShowModeratorBoard(false);
       setShowAdminBoard(false);
     }
-  }, [currentUser]);
+  }, []);
 
   return (
     <div>
-      <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <Link to={"/"} className="navbar-brand">
-          bezKoder
-        </Link>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <li className="nav-item">
+            <Link to={"/"} className="navbar-brand">
+              Crimson Cube
+            </Link>
+        </li>
         <div className="navbar-nav mr-auto">
           <li className="nav-item">
             <Link to={"/home"} className="nav-link">
