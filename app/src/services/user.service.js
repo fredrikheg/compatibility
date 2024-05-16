@@ -1,22 +1,20 @@
-import axios from "axios";
+import api from "./api";
 import authHeader from "./auth-header";
 
-const API_URL = "http://localhost:8081/api/test/";
-
 const getPublicContent = () => {
-    return axios.get(API_URL + "index");
+    return api.get("index");
 };
 
 const getUserBoard = () => {
-    return axios.get(API_URL + "user", {headers : authHeader()});
+    return api.get("/test/user");
 };
 
 const getModeratorBoard = () => {
-    return axios.get(API_URL + "mod", {headers : authHeader()});
+    return api.get("/test/mod");
 };
 
 const getAdminBoard = () => {
-    return axios.get(API_URL + "admin", {headers : authHeader()});
+    return api.get("/test/admin");
 };
 
 export default {
