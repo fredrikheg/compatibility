@@ -10,7 +10,7 @@ import java.util.Optional;
 @Service
 public class ClickService {
 
-    private ClickRepository clickRepository;
+    private final ClickRepository clickRepository;
 
     @Autowired
     public ClickService(ClickRepository clickRepository) {
@@ -24,6 +24,6 @@ public class ClickService {
             return click.get().getClicks();
         }
 
-        return 0;
+        return -1;
     }
 }

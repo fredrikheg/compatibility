@@ -12,6 +12,8 @@ public class Click {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Integer clicks;
+
     public Long getId() {
         return id;
     }
@@ -27,7 +29,4 @@ public class Click {
     public void setClicks(Integer clicks) {
         this.clicks = clicks;
     }
-
-    private Integer clicks;
-
 }
