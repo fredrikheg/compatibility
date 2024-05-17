@@ -1,8 +1,6 @@
 package net.crimsoncube.compatibility.security.jwt;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import net.crimsoncube.compatibility.security.service.UserDetailsImpl;
@@ -30,6 +28,14 @@ public class JwtUtils {
         try {
             Jwts.parser().verifyWith(key()).build().parseSignedClaims(jwt);
             return true;
+        }catch (MalformedJwtException e) {
+            logger.error("Malformed JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
         } catch (JwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
         }
@@ -56,6 +62,15 @@ public class JwtUtils {
 
         return Jwts.builder()
                 .subject(userPrincipal.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(new Date().getTime() + jwtExpirationMs))
+                .signWith(key())
+                .compact();
+    }
+
+    public String generateTokenFromUsername(String username) {
+        return Jwts.builder()
+                .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(new Date().getTime() + jwtExpirationMs))
                 .signWith(key())

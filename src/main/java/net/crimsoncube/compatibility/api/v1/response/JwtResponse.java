@@ -9,15 +9,16 @@ public class JwtResponse {
     private String email;
     private String token;
     private String type = "Bearer";
-
+    private String refreshToken;
     private List<String> roles;
 
-    public JwtResponse(String token, Long id, String username, String email, List<String> roles) {
+    public JwtResponse(String token, String refreshToken, Long id, String username, String email, List<String> roles) {
         this.token = token;
         this.id = id;
         this.username = username;
         this.email = email;
         this.roles = roles;
+        this.refreshToken = refreshToken;
     }
 
     public Long getId() {
@@ -62,5 +63,13 @@ public class JwtResponse {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

@@ -3,14 +3,19 @@ package net.crimsoncube.compatibility.api.v1;
 import jakarta.validation.Valid;
 import net.crimsoncube.compatibility.api.v1.request.LoginRequest;
 import net.crimsoncube.compatibility.api.v1.request.SignupRequest;
+import net.crimsoncube.compatibility.api.v1.request.TokenRefreshRequest;
 import net.crimsoncube.compatibility.api.v1.response.JwtResponse;
 import net.crimsoncube.compatibility.api.v1.response.MessageResponse;
+import net.crimsoncube.compatibility.api.v1.response.TokenRefreshResponse;
 import net.crimsoncube.compatibility.entity.ERole;
+import net.crimsoncube.compatibility.entity.RefreshToken;
 import net.crimsoncube.compatibility.entity.Role;
 import net.crimsoncube.compatibility.entity.User;
 import net.crimsoncube.compatibility.repository.RoleRepository;
 import net.crimsoncube.compatibility.repository.UserRepository;
+import net.crimsoncube.compatibility.security.exception.RefreshTokenException;
 import net.crimsoncube.compatibility.security.jwt.JwtUtils;
+import net.crimsoncube.compatibility.security.service.RefreshTokenService;
 import net.crimsoncube.compatibility.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +52,9 @@ public class AuthController {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest request) {
 
@@ -62,6 +70,7 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
+                refreshTokenService.createRefreshToken(userDetails.getId()).getToken(),
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
@@ -95,4 +104,20 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registration successful"));
     }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new RefreshTokenException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
+
 }
