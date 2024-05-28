@@ -27,6 +27,9 @@ const Profile = () => {
       <p>
         <strong>Email:</strong> {currentUser.email}
       </p>
+      <p>
+        <strong>Refresh token:</strong> {currentUser.refreshToken}
+      </p>
       <strong>Authorities:</strong>
       <ul>
         {currentUser.roles &&

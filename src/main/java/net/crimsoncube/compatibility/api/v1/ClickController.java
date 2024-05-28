@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/click")
 public class ClickController {
 
     private final ClickService clickService;
@@ -19,13 +18,13 @@ public class ClickController {
         this.clickService = clickService;
     }
 
-    @GetMapping("/user")
+    @GetMapping("/api/click/{clickerId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getClicks(@PathVariable Long clickerId) {
 
-        ClickResponse response = new ClickResponse();
-        response.setClicks(clickService.getClicks(clickerId));
+        ClickResponse clickResponse = new ClickResponse();
+        clickResponse.setClicks(clickService.getClicks(clickerId));
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(clickResponse);
     }
 }
