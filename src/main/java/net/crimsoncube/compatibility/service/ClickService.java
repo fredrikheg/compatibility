@@ -24,6 +24,15 @@ public class ClickService {
             return click.get().getClicks();
         }
 
-        return -1;
+        return -2;
+    }
+
+    public void increaseClicks(Long clickerId) {
+        Optional<Click> clickResult = clickRepository.findById(clickerId);
+
+        if(clickResult.isPresent()) {
+            Click click = clickResult.get();
+            click.setClicks(click.getClicks()+1);
+        }
     }
 }

@@ -1,6 +1,9 @@
 package net.crimsoncube.compatibility.api.v1;
 
+import net.crimsoncube.compatibility.api.v1.request.ClickRequest;
 import net.crimsoncube.compatibility.api.v1.response.ClickResponse;
+import net.crimsoncube.compatibility.api.v1.response.MessageResponse;
+import net.crimsoncube.compatibility.entity.Click;
 import net.crimsoncube.compatibility.service.ClickService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +29,14 @@ public class ClickController {
         clickResponse.setClicks(clickService.getClicks(clickerId));
 
         return ResponseEntity.ok(clickResponse);
+    }
+
+    @PostMapping("/api/click/increase")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> increaseClicks(@RequestBody ClickRequest request) {
+        
+        clickService.increaseClicks(request.getId());
+        MessageResponse message = new MessageResponse("ok");
+        return ResponseEntity.ok(message);
     }
 }

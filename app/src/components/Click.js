@@ -1,15 +1,28 @@
-import React, { useEffect, useRef }from "react";
-import { useCounter } from "../actions/click";
+import React, { useState, useCallback } from "react";
+import ClickService from "../services/click.service";
 
 const Click = () => {
-    const { count, handle } = useCounter(0);
+    const [isSending, setIsSending] = useState(false);
+    const [click, setClick] = useState(0);
+
+    const clicker = useCallback(async () => {
+      if(isSending) return;
+      setIsSending(true);
+
+      var counter = await ClickService.getCountAss();
+      console.log("counter: " + counter);
+      await setClick(counter);
+
+      setIsSending(false);
+    },[click]);
+
     return (
       <div>
-        <button id="clickbutton" onClick={handle}>
+        <button disabled={isSending} id="clickbutton" onClick={clicker}>
           Click
         </button>
         <p>
-          Count: {count}
+          Count: {click}
         </p>
       </div>
     );
