@@ -31,12 +31,26 @@ public class ClickController {
         return ResponseEntity.ok(clickResponse);
     }
 
-    @PostMapping("/api/click/increase")
+    @PostMapping("/api/click/click")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> increaseClicks(@RequestBody ClickRequest request) {
-        
-        clickService.increaseClicks(request.getId());
-        MessageResponse message = new MessageResponse("ok");
-        return ResponseEntity.ok(message);
+    public ResponseEntity<?> click(@RequestBody ClickRequest request) {
+
+        Integer clicks = clickService.increaseAndReturnClicks(request.getId());
+
+        ClickResponse clickResponse = new ClickResponse();
+        clickResponse.setClicks(clicks);
+
+        return ResponseEntity.ok(clickResponse);
+    }
+
+    @PostMapping("/api/click/reset")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> reset(@RequestBody ClickRequest request) {
+
+        Integer clicks = clickService.setClicks(request.getId(), 0);
+        ClickResponse clickResponse = new ClickResponse();
+        clickResponse.setClicks(clicks);
+
+        return ResponseEntity.ok(clickResponse);
     }
 }

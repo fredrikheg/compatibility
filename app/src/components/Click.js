@@ -1,29 +1,61 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import ClickService from "../services/click.service";
 
-const Click = () => {
-    const [isSending, setIsSending] = useState(false);
+const Click = (props) => {
+
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [isClicking, setIsClicking] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
     const [click, setClick] = useState(0);
 
+    const update = useCallback(async () => {
+      if(isUpdating) return;
+      setIsUpdating(true);
+
+      var counter = await ClickService.getCountAss(props.data);
+      setClick(counter);
+
+      setIsUpdating(false);
+    }, [click]);
+
     const clicker = useCallback(async () => {
-      if(isSending) return;
-      setIsSending(true);
+      if(isClicking) return;
+      setIsClicking(true);
 
-      var counter = await ClickService.getCountAss();
-      console.log("counter: " + counter);
-      await setClick(counter);
+      var counter = await ClickService.postClick(props.data);
+      setClick(counter);
 
-      setIsSending(false);
-    },[click]);
+      setIsClicking(false);
+    }, [click]);
+
+    const reset = useCallback(async () => {
+      if(isResetting) return;
+      setIsResetting(true);
+
+      var counter = await ClickService.resetClick(props.data);
+      setClick(counter);
+
+      setIsResetting(false);
+    }, [click]);
+
+    useEffect(() => {
+      update();
+    }, []);
 
     return (
       <div>
-        <button disabled={isSending} id="clickbutton" onClick={clicker}>
-          Click
-        </button>
-        <p>
+        <div className="pb-2 ps-2 border">
+            <button className="mt-2" disabled={isClicking} id="clickbutton" onClick={clicker}>
+              Click
+            </button>
+            <br/>
+            <button className="mt-2" disabled={isResetting} id="resetbutton" onClick={reset}>
+              Reset
+            </button>
+      </div>
+        <div className="pb-2 ps-2 border">
           Count: {click}
-        </p>
+        </div>
       </div>
     );
 }
