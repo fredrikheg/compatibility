@@ -54,7 +54,7 @@ const Click = (props) => {
             </button>
       </div>
         <div className="pb-2 ps-2 border">
-          Count: {click}
+          My clicker count: {click}
         </div>
       </div>
     );

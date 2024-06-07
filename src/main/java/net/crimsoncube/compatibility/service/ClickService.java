@@ -56,4 +56,8 @@ public class ClickService {
         }
         return -3;
     }
+
+    public void createClickForUser(Long userId) {
+        
+    }
 }

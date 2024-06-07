@@ -1,6 +1,7 @@
 package net.crimsoncube.compatibility.api.v1;
 
 import net.crimsoncube.compatibility.api.v1.request.ClickRequest;
+import net.crimsoncube.compatibility.api.v1.request.createClickRequest;
 import net.crimsoncube.compatibility.api.v1.response.ClickResponse;
 import net.crimsoncube.compatibility.api.v1.response.MessageResponse;
 import net.crimsoncube.compatibility.entity.Click;
@@ -19,6 +20,21 @@ public class ClickController {
     @Autowired
     public ClickController(ClickService clickService) {
         this.clickService = clickService;
+    }
+
+    @PostMapping("/api/click/create")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> createClick(@RequestBody createClickRequest request) {
+
+        ClickResponse response = new ClickResponse();
+
+        try {
+            clickService.createClickForUser(request.getUserId());
+            response.setClicks(0);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("FAIL");
+        }
     }
 
     @GetMapping("/api/click/{clickerId}")

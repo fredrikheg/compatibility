@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/test")
@@ -14,8 +16,8 @@ public class UserController {
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MODERATOR') or hasRole('ROLE_ADMIN')")
-    public String getUserContent() {
-        return "User content";
+    public String getUserContent(Principal principal) {
+        return "User content for " + principal.getName();
     }
 
     @GetMapping("/mod")

@@ -1,9 +1,7 @@
 package net.crimsoncube.compatibility.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import org.springframework.context.annotation.Lazy;
 
 @Entity
 public class Click {
@@ -13,6 +11,10 @@ public class Click {
     private Long id;
 
     private Integer clicks;
+
+    @OneToMany
+    @Lazy
+    private ClickOwner owner;
 
     public Long getId() {
         return id;
