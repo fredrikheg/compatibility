@@ -6,37 +6,37 @@ const Click = (props) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isClicking, setIsClicking] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
-    const [click, setClick] = useState(0);
+    const [clicks, setClicks] = useState(0);
 
     const update = useCallback(async () => {
       if(isUpdating) return;
       setIsUpdating(true);
 
-      var counter = await ClickService.getCountAss(props.data);
-      setClick(counter);
+      var counter = await ClickService.getCountAss();
+      setClicks(counter);
 
       setIsUpdating(false);
-    }, [click]);
+    }, [clicks]);
 
     const clicker = useCallback(async () => {
       if(isClicking) return;
       setIsClicking(true);
 
       var counter = await ClickService.postClick(props.data);
-      setClick(counter);
+      setClicks(counter);
 
       setIsClicking(false);
-    }, [click]);
+    }, [clicks]);
 
     const reset = useCallback(async () => {
       if(isResetting) return;
       setIsResetting(true);
 
       var counter = await ClickService.resetClick(props.data);
-      setClick(counter);
+      setClicks(counter);
 
       setIsResetting(false);
-    }, [click]);
+    }, [clicks]);
 
     useEffect(() => {
       update();
@@ -54,7 +54,7 @@ const Click = (props) => {
             </button>
       </div>
         <div className="pb-2 ps-2 border">
-          My clicker count: {click}
+          My clicker count: {clicks}
         </div>
       </div>
     );

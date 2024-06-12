@@ -1,7 +1,8 @@
 package net.crimsoncube.compatibility.entity;
 
 import jakarta.persistence.*;
-import org.springframework.context.annotation.Lazy;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 public class Click {
@@ -12,9 +13,7 @@ public class Click {
 
     private Integer clicks;
 
-    @OneToMany
-    @Lazy
-    private ClickOwner owner;
+    private Long ownerId;
 
     public Long getId() {
         return id;
@@ -30,5 +29,14 @@ public class Click {
 
     public void setClicks(Integer clicks) {
         this.clicks = clicks;
+    }
+
+    // No reference back here.
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long owner) {
+        this.ownerId = owner;
     }
 }
