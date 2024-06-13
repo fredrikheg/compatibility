@@ -8,5 +8,5 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface ClickRepository extends JpaRepository<Click, Long> {
-    Optional<Set<Click>> findByOwnerId(Long ownerId);
+    Optional<Set<Click>> findByOwnerIdOrderById(Long ownerId);
 }

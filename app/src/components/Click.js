@@ -12,8 +12,11 @@ const Click = (props) => {
       if(isUpdating) return;
       setIsUpdating(true);
 
-      var counter = await ClickService.getCountAss();
-      setClicks(counter);
+      var userClicks = await ClickService.listClicks();
+
+      console.log(JSON.stringify(userClicks));
+
+      setClicks(userClicks);
 
       setIsUpdating(false);
     }, [clicks]);
@@ -44,18 +47,26 @@ const Click = (props) => {
 
     return (
       <div>
-        <div className="pb-2 ps-2 border">
-            <button className="mt-2" disabled={isClicking} id="clickbutton" onClick={clicker}>
-              Click
-            </button>
-            <br/>
-            <button className="mt-2" disabled={isResetting} id="resetbutton" onClick={reset}>
-              Reset
-            </button>
-      </div>
-        <div className="pb-2 ps-2 border">
-          My clicker count: {clicks}
-        </div>
+        {
+          !clicks ? null : (
+            clicks.map((click) =>
+              <>
+              <div className="pb-2 ps-2 border" id={click.clickId}>
+                <button className="mt-2" disabled={isClicking} id="click-{click.clickId}" onClick={clicker}>
+                  Click
+                </button>
+                <br/>
+                <button className="mt-2" disabled={isResetting} id="resetbutton" onClick={reset}>
+                  Reset
+                </button>
+                <div className="pb-2 ps-2 border">
+                  My clicker count: {click.numClicks}
+                </div>
+              </div>
+              </>
+            )
+          )
+        }
       </div>
     );
 }

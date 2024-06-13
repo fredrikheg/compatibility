@@ -1,3 +1,3 @@
 package net.crimsoncube.compatibility.service.exception;
 
-public class ClickerNotFoundException extends Throwable {}
+public class ClicksNotFoundException extends Throwable {}

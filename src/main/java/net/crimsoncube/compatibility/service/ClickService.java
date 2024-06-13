@@ -5,7 +5,7 @@ import net.crimsoncube.compatibility.entity.Click;
 import net.crimsoncube.compatibility.entity.User;
 import net.crimsoncube.compatibility.repository.ClickRepository;
 import net.crimsoncube.compatibility.repository.UserRepository;
-import net.crimsoncube.compatibility.service.exception.ClickerNotFoundException;
+import net.crimsoncube.compatibility.service.exception.ClicksNotFoundException;
 import net.crimsoncube.compatibility.service.exception.UserNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,71 +29,66 @@ public class ClickService {
         this.userRepository = userRepository;
     }
 
-    public Integer setClicks(Long clickerId, Integer clicks) {
-
-        Optional<Click> click = clickRepository.findById(clickerId);
-        if(click.isPresent()) {
-            click.get().setClicks(clicks);
-            clickRepository.save(click.get());
-            return clicks;
-        }
-        return -1;
-    }
-
     public Set<ClickDto> getClicks(String username) {
 
-        User user;
-        Set<ClickDto> response = new HashSet<>();
-
-        try {
-            user = userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
-        }catch (UserNotFoundException e) {
-            log.error("Trying to get a click for missing user {}", username);
-            return response;
-        }
-
-        try {
-            Set<Click> clicks = clickRepository.findByOwnerId(user.getId()).orElseThrow(ClickerNotFoundException::new);
-            clicks.forEach(c -> response.add(ClickDto.fromClick(c)));
-
-        } catch (ClickerNotFoundException e) {
-            response.add(createAndSaveNewClickForOwner(user));
-        }
-        return response;
+        return findClickDtosForUser(username);
     }
 
-    public Click increaseAndReturnClick(Long clickerId) {
+    public Set<ClickDto> increaseAndReturnClicks(String userName, Long clickerId) {
         try {
-            Click click = clickRepository.findById(clickerId).orElseThrow(ClickerNotFoundException::new);
+            Click click = clickRepository.findById(clickerId).orElseThrow(ClicksNotFoundException::new);
             click.setClicks(click.getClicks()+1);
             clickRepository.save(click);
-            return click;
-        } catch (ClickerNotFoundException e ) {
+
+            return findClickDtosForUser(userName);
+
+        } catch (ClicksNotFoundException e ) {
             log.warn("Clicker not found {}.", clickerId);
         }
         return null;
     }
 
-    public void createClickForUser(Long userId) {
+    public boolean createClickForUser(String userName) {
 
         User user;
 
         try {
-            user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+            user = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
 
         } catch (UserNotFoundException e ) {
             // This should not happen in a natural flow
-            log.error("Missing userID used in trying to create a new clicker: " + userId);
-            return;
+            log.error("Missing userID used in trying to create a new clicker: " + userName);
+            return false;
         }
 
         try {
-            clickRepository.findByOwnerId(userId).orElseThrow(ClickerNotFoundException::new);
+            clickRepository.findByOwnerIdOrderById(user.getId()).orElseThrow(ClicksNotFoundException::new);
             // User already have a click, ignore.
-            log.warn("User {} already have a clicker", userId);
-        } catch (ClickerNotFoundException e) {
+            log.warn("User {} already have a clicker", userName);
+        } catch (ClicksNotFoundException e) {
             createAndSaveNewClickForOwner(user);
+            return true;
         }
+
+        return false;
+    }
+
+    private Set<ClickDto> findClickDtosForUser(String userName) {
+
+        Set<ClickDto> result = new HashSet<>();
+
+        try {
+            User user = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+            Set<Click> clicks = clickRepository.findByOwnerIdOrderById(user.getId()).orElseThrow(ClicksNotFoundException::new);
+            clicks.forEach(c -> result.add(ClickDto.fromClick(c)));
+
+        } catch (UserNotFoundException e) {
+            log.error("User {} not found getting clicks", userName);
+        } catch (ClicksNotFoundException e) {
+            log.error("No clicks found for user {}", userName);
+        }
+
+        return result;
     }
 
     private ClickDto createAndSaveNewClickForOwner(User owner) {
