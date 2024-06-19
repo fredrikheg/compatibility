@@ -12,9 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ClickService {
@@ -29,18 +28,18 @@ public class ClickService {
         this.userRepository = userRepository;
     }
 
-    public Set<ClickDto> getClicks(String username) {
+    public List<ClickDto> getClicks(String username) {
 
-        return findClickDtosForUser(username);
+        return findClicksForUser(username);
     }
 
-    public Set<ClickDto> increaseAndReturnClicks(String userName, Long clickerId) {
+    public List<ClickDto> increaseAndReturnClicks(String userName, Long clickerId) {
         try {
             Click click = clickRepository.findById(clickerId).orElseThrow(ClicksNotFoundException::new);
             click.setClicks(click.getClicks()+1);
             clickRepository.save(click);
 
-            return findClickDtosForUser(userName);
+            return findClicksForUser(userName);
 
         } catch (ClicksNotFoundException e ) {
             log.warn("Clicker not found {}.", clickerId);
@@ -61,31 +60,28 @@ public class ClickService {
             return false;
         }
 
-        try {
-            clickRepository.findByOwnerIdOrderById(user.getId()).orElseThrow(ClicksNotFoundException::new);
-            // User already have a click, ignore.
-            log.warn("User {} already have a clicker", userName);
-        } catch (ClicksNotFoundException e) {
+        if(clickRepository.findClicksByOwner(user.getId()).isEmpty() ) {
             createAndSaveNewClickForOwner(user);
             return true;
-        }
+            // User already have a click, ignore.
 
+        } else {
+            log.warn("User {} already have a clicker", userName);
+        }
         return false;
     }
 
-    private Set<ClickDto> findClickDtosForUser(String userName) {
+    private List<ClickDto> findClicksForUser(String userName) {
 
-        Set<ClickDto> result = new HashSet<>();
+        List<ClickDto> result = new ArrayList<>();
 
         try {
             User user = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
-            Set<Click> clicks = clickRepository.findByOwnerIdOrderById(user.getId()).orElseThrow(ClicksNotFoundException::new);
-            clicks.forEach(c -> result.add(ClickDto.fromClick(c)));
+            List<Click> clicks =  clickRepository.findClicksByOwner(user.getId());
+            clicks.iterator().forEachRemaining(c -> result.add(ClickDto.fromClick(c)));
 
         } catch (UserNotFoundException e) {
             log.error("User {} not found getting clicks", userName);
-        } catch (ClicksNotFoundException e) {
-            log.error("No clicks found for user {}", userName);
         }
 
         return result;
@@ -106,5 +102,29 @@ public class ClickService {
         dto.setClickId(click.getId());
 
         return dto;
+    }
+
+    public List<ClickDto> resetClicks(String userName, Long clickId) {
+
+        List<ClickDto> result = new ArrayList<>();
+
+        try {
+            User user = userRepository.findByUsername(userName).orElseThrow(UserNotFoundException::new);
+
+            Click click = clickRepository.findById(clickId).orElseThrow(ClicksNotFoundException::new);
+            click.setClicks(0);
+            clickRepository.save(click);
+
+
+            List<Click> clicks =  clickRepository.findClicksByOwner(user.getId());
+            clicks.iterator().forEachRemaining(c -> result.add(ClickDto.fromClick(c)));
+
+        } catch (UserNotFoundException e) {
+            log.error("User {} not found getting clicks", userName);
+        } catch (ClicksNotFoundException e) {
+            log.error("Click {} not found for user {}", clickId, userName);
+        }
+
+        return result;
     }
 }

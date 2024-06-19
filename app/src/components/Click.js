@@ -14,28 +14,26 @@ const Click = (props) => {
 
       var userClicks = await ClickService.listClicks();
 
-      console.log(JSON.stringify(userClicks));
-
       setClicks(userClicks);
 
       setIsUpdating(false);
     }, [clicks]);
 
-    const clicker = useCallback(async () => {
+    const clicker = useCallback(async (clickId) => {
       if(isClicking) return;
       setIsClicking(true);
 
-      var counter = await ClickService.postClick(props.data);
+      var counter = await ClickService.postClick(clickId);
       setClicks(counter);
 
       setIsClicking(false);
     }, [clicks]);
 
-    const reset = useCallback(async () => {
+    const reset = useCallback(async (clickId) => {
       if(isResetting) return;
       setIsResetting(true);
 
-      var counter = await ClickService.resetClick(props.data);
+      var counter = await ClickService.resetClick(clickId);
       setClicks(counter);
 
       setIsResetting(false);
@@ -46,27 +44,23 @@ const Click = (props) => {
     }, []);
 
     return (
-      <div>
-        {
-          !clicks ? null : (
+      <div className="col col-8">
+        {!clicks ? null : (
             clicks.map((click) =>
-              <>
-              <div className="pb-2 ps-2 border" id={click.clickId}>
-                <button className="mt-2" disabled={isClicking} id="click-{click.clickId}" onClick={clicker}>
+              <div className="mb-2 pb-1 ps-2 border" key={click.clickId}>
+                <button className="mt-2" disabled={isClicking} key="click-{click.clickId}" onClick={clicker.bind(this,click.clickId)}>
                   Click
                 </button>
                 <br/>
-                <button className="mt-2" disabled={isResetting} id="resetbutton" onClick={reset}>
+                <button className="mt-2" disabled={isResetting} key="resetbutton-{click.clickId}" onClick={reset.bind(this,click.clickId)}>
                   Reset
                 </button>
-                <div className="pb-2 ps-2 border">
-                  My clicker count: {click.numClicks}
+                <div className="mt-1">
+                  This clicker count: {click.numClicks}
                 </div>
               </div>
-              </>
             )
-          )
-        }
+        )}
       </div>
     );
 }

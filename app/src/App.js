@@ -83,7 +83,7 @@ const App = () => {
           {currentUser && (
             <li className="nav-item">
               <Link to={"/user"} className="nav-link">
-                User
+                Questions
               </Link>
             </li>
           )}
@@ -93,7 +93,7 @@ const App = () => {
           <div className="navbar-nav ml-auto">
             <li className="nav-item">
               <Link to={"/profile"} className="nav-link">
-                {currentUser.username}
+                My Profile
               </Link>
             </li>
             <li className="nav-item">

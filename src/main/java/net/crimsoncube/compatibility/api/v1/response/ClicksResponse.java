@@ -2,21 +2,20 @@ package net.crimsoncube.compatibility.api.v1.response;
 
 import net.crimsoncube.compatibility.api.v1.response.exposed.ClickDto;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ClicksResponse {
 
-    private Set<ClickDto> clicks;
+    private List<ClickDto> clicks;
 
-    public Set<ClickDto> getClicks() {
+    public List<ClickDto> getClicks() {
         if(clicks == null) {
-            clicks = new HashSet<>();
+            clicks = new ArrayList<>();
         }
         return clicks;
     }
 
-    public void setClicks(Set<ClickDto> clicks) {
+    public void setClicks(List<ClickDto> clicks) {
         this.clicks = clicks;
     }
 }
