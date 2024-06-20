@@ -1,9 +1,6 @@
 package net.crimsoncube.compatibility.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Click {
@@ -13,6 +10,8 @@ public class Click {
     private Long id;
 
     private Integer clicks;
+
+    private Long ownerId;
 
     public Long getId() {
         return id;
@@ -28,5 +27,14 @@ public class Click {
 
     public void setClicks(Integer clicks) {
         this.clicks = clicks;
+    }
+
+    // No reference back here.
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long owner) {
+        this.ownerId = owner;
     }
 }

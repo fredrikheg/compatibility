@@ -1,19 +1,25 @@
 package net.crimsoncube.compatibility.api.v1;
 
 import net.crimsoncube.compatibility.api.v1.request.ClickRequest;
-import net.crimsoncube.compatibility.api.v1.response.ClickResponse;
+import net.crimsoncube.compatibility.api.v1.response.ClicksResponse;
 import net.crimsoncube.compatibility.api.v1.response.MessageResponse;
-import net.crimsoncube.compatibility.entity.Click;
+import net.crimsoncube.compatibility.api.v1.response.exposed.ClickDto;
 import net.crimsoncube.compatibility.service.ClickService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.Set;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class ClickController {
 
+    private static final Log log = LogFactory.getLog(ClickController.class);
     private final ClickService clickService;
 
     @Autowired
@@ -21,35 +27,45 @@ public class ClickController {
         this.clickService = clickService;
     }
 
-    @GetMapping("/api/click/{clickerId}")
+    @PutMapping("/api/click/create")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getClicks(@PathVariable Long clickerId) {
+    public ResponseEntity<?> createClick(Principal principal) {
 
-        ClickResponse clickResponse = new ClickResponse();
-        clickResponse.setClicks(clickService.getClicks(clickerId));
+        if( clickService.createClickForUser(principal.getName()) ) {
+            MessageResponse response = new MessageResponse("OK");
+            return ResponseEntity.ok(response);
+        } else {
+            MessageResponse response = new MessageResponse("OK");
+            return ResponseEntity.ok(response);
+        }
+    }
 
+    @GetMapping("/api/click/list")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getClicks(Principal principal) {
+
+        ClicksResponse clickResponse = new ClicksResponse();
+        clickResponse.setClicks( clickService.getClicks(principal.getName()));
         return ResponseEntity.ok(clickResponse);
     }
 
     @PostMapping("/api/click/click")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> click(@RequestBody ClickRequest request) {
+    public ResponseEntity<?> click(Principal principal, @RequestBody ClickRequest request) {
 
-        Integer clicks = clickService.increaseAndReturnClicks(request.getId());
-
-        ClickResponse clickResponse = new ClickResponse();
-        clickResponse.setClicks(clicks);
+        ClicksResponse clickResponse = new ClicksResponse();
+        clickResponse.setClicks( clickService.increaseAndReturnClicks(principal.getName(), request.getId()) );
 
         return ResponseEntity.ok(clickResponse);
     }
 
     @PostMapping("/api/click/reset")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> reset(@RequestBody ClickRequest request) {
+    public ResponseEntity<?> reset(Principal principal, @RequestBody ClickRequest request) {
 
-        Integer clicks = clickService.setClicks(request.getId(), 0);
-        ClickResponse clickResponse = new ClickResponse();
-        clickResponse.setClicks(clicks);
+        ClicksResponse clickResponse = new ClicksResponse();
+
+        clickResponse.setClicks(clickService.resetClicks(principal.getName(), request.getId()));
 
         return ResponseEntity.ok(clickResponse);
     }

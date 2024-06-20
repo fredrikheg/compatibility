@@ -6,56 +6,61 @@ const Click = (props) => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [isClicking, setIsClicking] = useState(false);
     const [isResetting, setIsResetting] = useState(false);
-    const [click, setClick] = useState(0);
+    const [clicks, setClicks] = useState(0);
 
     const update = useCallback(async () => {
       if(isUpdating) return;
       setIsUpdating(true);
 
-      var counter = await ClickService.getCountAss(props.data);
-      setClick(counter);
+      var userClicks = await ClickService.listClicks();
+
+      setClicks(userClicks);
 
       setIsUpdating(false);
-    }, [click]);
+    }, [clicks]);
 
-    const clicker = useCallback(async () => {
+    const clicker = useCallback(async (clickId) => {
       if(isClicking) return;
       setIsClicking(true);
 
-      var counter = await ClickService.postClick(props.data);
-      setClick(counter);
+      var counter = await ClickService.postClick(clickId);
+      setClicks(counter);
 
       setIsClicking(false);
-    }, [click]);
+    }, [clicks]);
 
-    const reset = useCallback(async () => {
+    const reset = useCallback(async (clickId) => {
       if(isResetting) return;
       setIsResetting(true);
 
-      var counter = await ClickService.resetClick(props.data);
-      setClick(counter);
+      var counter = await ClickService.resetClick(clickId);
+      setClicks(counter);
 
       setIsResetting(false);
-    }, [click]);
+    }, [clicks]);
 
     useEffect(() => {
       update();
     }, []);
 
     return (
-      <div>
-        <div className="pb-2 ps-2 border">
-            <button className="mt-2" disabled={isClicking} id="clickbutton" onClick={clicker}>
-              Click
-            </button>
-            <br/>
-            <button className="mt-2" disabled={isResetting} id="resetbutton" onClick={reset}>
-              Reset
-            </button>
-      </div>
-        <div className="pb-2 ps-2 border">
-          Count: {click}
-        </div>
+      <div className="col col-8">
+        {!clicks ? null : (
+            clicks.map((click) =>
+              <div className="mb-2 pb-1 ps-2 border" key={click.clickId}>
+                <button className="mt-2" disabled={isClicking} key="click-{click.clickId}" onClick={clicker.bind(this,click.clickId)}>
+                  Click
+                </button>
+                <br/>
+                <button className="mt-2" disabled={isResetting} key="resetbutton-{click.clickId}" onClick={reset.bind(this,click.clickId)}>
+                  Reset
+                </button>
+                <div className="mt-1">
+                  This clicker count: {click.numClicks}
+                </div>
+              </div>
+            )
+        )}
       </div>
     );
 }

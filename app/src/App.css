@@ -30,3 +30,15 @@ label {
   -webkit-border-radius: 50%;
   border-radius: 50%;
 }
+
+.box {
+  display: flex;
+}
+
+.left-box {
+  flex: 5 1 auto;
+}
+
+.right-box {
+  flex: 3 1 auto;
+}
