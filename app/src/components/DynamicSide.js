@@ -29,7 +29,7 @@ const DynamicSide = () => {
     return (
       <div className="col col-4 border">
         {!content ? null : (
-          content.map((c) => React.createElement(DynamicComponents[c.type], {data:c}))
+          content.map((c) => React.createElement(DynamicComponents[c.type], {data:c,key:c.id}))
         )}
       </div>
     );
