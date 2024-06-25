@@ -6,6 +6,7 @@ import jakarta.persistence.JoinColumn;
 import org.hibernate.annotations.Type;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 public class UserAnswerId implements Serializable {
@@ -32,4 +33,17 @@ public class UserAnswerId implements Serializable {
     public void setQuestionId(Long questionId) {
         this.questionId = questionId;
     }
- }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserAnswerId answerId = (UserAnswerId) o;
+        return Objects.equals(userId, answerId.userId) && Objects.equals(questionId, answerId.questionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, questionId);
+    }
+}

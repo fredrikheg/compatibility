@@ -11,6 +11,7 @@ public class Question {
 
     private Long id;
     private String questionText;
+    private String questionBody;
     private Set<Question> subQuestions = new HashSet<>();
     private QuestionMeta meta;
 
@@ -48,5 +49,13 @@ public class Question {
 
     public void setSubQuestions(Set<Question> subQuestions) {
         this.subQuestions = subQuestions;
+    }
+
+    public String getQuestionBody() {
+        return questionBody;
+    }
+
+    public void setQuestionBody(String questionBody) {
+        this.questionBody = questionBody;
     }
 }

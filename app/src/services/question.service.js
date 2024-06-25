@@ -18,8 +18,6 @@ const getCurrentQuestions = async () => {
 
 const answerQuestion = async (questionId, answer) => {
 
-    console.log("Question "+questionId+" answered with " + answer);
-
     var response;
 
     try {

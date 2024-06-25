@@ -8,7 +8,7 @@ const QuestionList = () => {
 
   const update = useCallback(async () => {
     var curQuests = await QuestionService.getCurrentQuestions();
- console.log(JSON.stringify(curQuests));
+
     setQuestions(curQuests);
   }, [questions]);
 
