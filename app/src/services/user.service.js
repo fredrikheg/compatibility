@@ -6,15 +6,15 @@ const getPublicContent = () => {
 };
 
 const getUserBoard = () => {
-    return api.get("/test/user");
+    return api.get("/user/user");
 };
 
 const getModeratorBoard = () => {
-    return api.get("/test/mod");
+    return api.get("/user/mod");
 };
 
 const getAdminBoard = () => {
-    return api.get("/test/admin");
+    return api.get("/user/admin");
 };
 
 export default {

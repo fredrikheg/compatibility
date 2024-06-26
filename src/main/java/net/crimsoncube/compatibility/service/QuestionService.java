@@ -1,6 +1,7 @@
 package net.crimsoncube.compatibility.service;
 
 import net.crimsoncube.compatibility.api.v1.request.QuestionAnswerRequest;
+import net.crimsoncube.compatibility.api.v1.response.exposed.AnswerDto;
 import net.crimsoncube.compatibility.entity.*;
 import net.crimsoncube.compatibility.repository.AnswerRepository;
 import net.crimsoncube.compatibility.repository.QuestionRepository;
@@ -89,6 +90,27 @@ public class QuestionService {
         q2.setMeta(m2);
 
         result.add(q2);
+
+        return result;
+    }
+
+    public List<AnswerDto> getAnsweredQuestions(String username) {
+
+        List<AnswerDto> result = new ArrayList<>();
+
+        try {
+            User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
+            answerRepository.findByUserId(user.getId()).forEach(a -> {
+
+                AnswerDto answer = new AnswerDto((String)a.get("question_text"), (Integer)a.get("answer"));
+                result.add(answer);
+            });
+
+            return result;
+
+        } catch (UsernameNotFoundException e) {
+            log.error("Username {} not found when trying to get answered questions", username);
+        }
 
         return result;
     }

@@ -4,7 +4,7 @@ const getContent = async () => {
     var response = {};
     try {
 
-      response = await api.get("/test/dynamic");
+      response = await api.get("/user/dynamic");
       return response.data.content;
 
     } catch(error) {

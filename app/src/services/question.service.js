@@ -27,11 +27,30 @@ const answerQuestion = async (questionId, answer) => {
       response = "error";
     }
     return response;
-}
+};
+
+const getAnsweredQuestions = async () => {
+
+    var response;
+
+    try {
+      response = await api.get("/question/answered");
+
+      console.log(JSON.stringify(response.data));
+
+      return response.data;
+    } catch(error) {
+      console.log(error);
+      response = 'error';
+    }
+
+    return response;
+};
 
 const QuestionService = {
     getCurrentQuestions,
-    answerQuestion
+    answerQuestion,
+    getAnsweredQuestions,
 };
 
 export default QuestionService;

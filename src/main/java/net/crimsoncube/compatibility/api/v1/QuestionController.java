@@ -48,4 +48,11 @@ public class QuestionController {
             return ResponseEntity.ok(new MessageResponse("ERROR"));
         }
     }
+
+    @GetMapping("/api/question/answered")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> answeredQuestions(Principal principal) {
+
+        return ResponseEntity.ok(questionService.getAnsweredQuestions(principal.getName()));
+    }
 }

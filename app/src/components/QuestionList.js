@@ -18,7 +18,6 @@ const QuestionList = () => {
 
   return (
     <div className="col col-8">
-      The Questions
       <div className="list-group list-group-flush">
         {!questions ? null : (
           questions.map(question => React.createElement(Question, {data:question,key:question.id}, ))

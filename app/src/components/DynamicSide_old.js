@@ -1,7 +1,14 @@
 import { useEffect, useCallback, useState, Component } from "react";
 import React from "react";
-import QuestionService from "../services/question.service";
-import Answer from "./Answer";
+import DynamicService from "../services/dynamic.service";
+
+import BoxDynComp from "./dynamic/BoxDynComp";
+import TextDynComp from "./dynamic/TextDynComp";
+
+const DynamicComponents = {
+  box: BoxDynComp,
+  text: TextDynComp,
+};
 
 const DynamicSide = () => {
 
@@ -9,7 +16,7 @@ const DynamicSide = () => {
 
     const update = useCallback(async () => {
 
-      var cont = await QuestionService.getAnsweredQuestions();
+      var cont = await DynamicService.getContent();
 
       setContent(cont);
 
@@ -20,10 +27,9 @@ const DynamicSide = () => {
     }, []);
 
     return (
-      <div className="col col-4 ">
-        <h5>Answers</h5>
+      <div className="col col-4 border">
         {!content ? null : (
-          content.map((c) => React.createElement(Answer, {data:c,key:c.id}))
+          content.map((c) => React.createElement(DynamicComponents[c.type], {data:c,key:c.id}))
         )}
       </div>
     );

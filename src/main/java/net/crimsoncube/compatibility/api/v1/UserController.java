@@ -15,7 +15,7 @@ import java.security.Principal;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api/user")
 public class UserController {
 
 
@@ -24,7 +24,7 @@ public class UserController {
     public String getUserContent(Principal principal) {
         // This needs to be dynamic content for the current user.
         // A list of descriptions of current questions.
-        return "User content for " + principal.getName();
+        return "Questions for you, " + principal.getName();
     }
 
     @GetMapping("/mod")
