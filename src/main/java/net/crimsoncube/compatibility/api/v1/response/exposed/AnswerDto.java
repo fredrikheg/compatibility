@@ -2,14 +2,16 @@ package net.crimsoncube.compatibility.api.v1.response.exposed;
 
 public class AnswerDto {
 
+    private Long questionId;
     private String text;
     private Integer answer;
-    private String answerText;
+//    private final String answerText; // This is needed for JSON introspection.. breaks if removed
 
-    public AnswerDto(String text, Integer answer) {
+    public AnswerDto(String text, Integer answer, Long questionId) {
         this.text = text;
         this.answer = answer;
-        this.answerText = getAnswerText();
+        this.questionId = questionId;
+//        this.answerText = getAnswerText();
     }
 
     public String getText() {
@@ -38,5 +40,13 @@ public class AnswerDto {
 
     public void setAnswer(Integer answer) {
         this.answer = answer;
+    }
+
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
     }
 }

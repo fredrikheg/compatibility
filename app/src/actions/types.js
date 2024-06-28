@@ -8,3 +8,5 @@ export const SET_MESSAGE = "SET_MESSAGE";
 export const CLEAR_MESSAGE = "CLEAR_MESSAGE";
 
 export const REFRESH_TOKEN = "REFRESH_TOKEN";
+
+export const REFRESH_ANSWERS = "REFRESH_ANSWERS";

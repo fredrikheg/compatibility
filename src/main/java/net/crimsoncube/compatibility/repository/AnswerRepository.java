@@ -10,6 +10,6 @@ import java.util.Map;
 
 public interface AnswerRepository extends JpaRepository<UserAnswer, UserAnswerId> {
 
-    @Query(value = "select qu.question_text, ua.answer from user_answer ua join questions qu on qu.id = ua.question_id where ua.user_id = ?1", nativeQuery = true)
+    @Query(value = "select qu.question_text, ua.answer, ua.question_id from user_answer ua join questions qu on qu.id = ua.question_id where ua.user_id = ?1", nativeQuery = true)
     List<Map<String, Object>> findByUserId(Long userId);
 }

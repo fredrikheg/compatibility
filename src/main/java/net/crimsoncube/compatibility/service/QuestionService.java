@@ -45,6 +45,10 @@ public class QuestionService {
 
         log.info("User {} answered question {} with {}", userName, answerRequest.getQuestionId(), answerRequest.getAnswer());
 
+        if(answerRequest.getAnswer() == -1) {
+            return false;
+        }
+
         try {
             User user = userRepository.findByUsername(userName).orElseThrow(() -> new UsernameNotFoundException("User not found: " + userName));
 
@@ -65,35 +69,6 @@ public class QuestionService {
         }
     }
 
-
-    // DEV -----------------------------------------------------------------
-    private List<Question> stubQuestions() {
-
-        List<Question> result = new ArrayList<>();
-
-        Question q1 = new Question();
-        q1.setId(1L);
-        q1.setQuestionText("I wanna have a beer!");
-        q1.setQuestionBody("How likely are you to enjoy a beer?");
-        QuestionMeta m1 = new QuestionMeta();
-        m1.setId(1L);
-        q1.setMeta(m1);
-
-        result.add(q1);
-
-        Question q2 = new Question();
-        q2.setId(2L);
-        q2.setQuestionText("I wanna sleep!");
-        q2.setQuestionBody("Do you want to hit the sack right away?");
-        QuestionMeta m2 = new QuestionMeta();
-        m2.setId(2L);
-        q2.setMeta(m2);
-
-        result.add(q2);
-
-        return result;
-    }
-
     public List<AnswerDto> getAnsweredQuestions(String username) {
 
         List<AnswerDto> result = new ArrayList<>();
@@ -102,7 +77,7 @@ public class QuestionService {
             User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(""));
             answerRepository.findByUserId(user.getId()).forEach(a -> {
 
-                AnswerDto answer = new AnswerDto((String)a.get("question_text"), (Integer)a.get("answer"));
+                AnswerDto answer = new AnswerDto((String)a.get("question_text"), (Integer)a.get("answer"), (Long)a.get("question_id"));
                 result.add(answer);
             });
 

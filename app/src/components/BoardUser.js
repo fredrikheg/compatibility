@@ -7,6 +7,7 @@ import DynamicSide from "./DynamicSide";
 
 const BoardUser = () => {
   const [content, setContent] = useState("");
+  const [questionAnswered, setQuestionAnswered] = useState("");
 
   useEffect(() => {
     UserService.getUserBoard().then(
@@ -26,14 +27,20 @@ const BoardUser = () => {
     );
   }, []);
 
+
+  const handleAnsweredQuestion = () => {
+    var qNum = questionAnswered+1;
+    console.log("Question answered " + questionAnswered);
+  };
+
   return (
     <div className="container">
       <header className="jumbotron">
         <h3>{content}</h3>
       </header>
       <div className="row">
-        <QuestionList />
-        <DynamicSide />
+        <QuestionList handleAnsweredQuestion={handleAnsweredQuestion}/>
+        <DynamicSide questionAnswered={questionAnswered}/>
       </div>
     </div>
   );

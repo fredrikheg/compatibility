@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import QuestionService from "../services/question.service";
 import Question from "./Question";
 
-const QuestionList = () => {
+const QuestionList = (props) => {
 
   const [questions, setQuestions] = useState([]);
 
@@ -20,7 +20,7 @@ const QuestionList = () => {
     <div className="col col-8">
       <div className="list-group list-group-flush">
         {!questions ? null : (
-          questions.map(question => React.createElement(Question, {data:question,key:question.id}, ))
+          questions.map(question => React.createElement(Question, {data:question,key:question.id,handleAnswer:props.handleAnsweredQuestion}))
         )}
       </div>
     </div>
